@@ -144,6 +144,33 @@ if (!isset($_SESSION['username'])) {
         button:hover {
             background-color: #f0f0f0;
         }
+
+        main {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    table {
+      width: 80%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
     </style>
 </head>
 <body>
@@ -165,16 +192,41 @@ if (!isset($_SESSION['username'])) {
     </header>
 
     <main>
-    <h2>Daftar Barang</h2>
+    <h2>Daftar Pembelian</h2>
     <p>Daftar pembelian dibuat secara acak tiap kali halaman dimuat</p>
+    <table border="1" cellpadding="10" cellspacing="0">
+      <tr>
+        <th>Kode Barang</th>
+        <th>Nama Barang</th>
+        <th>Harga Barang (Rp)</th>
+        <th>Jumlah</th>
+        <th>Total (Rp)</th>
+      </tr>
+
     <?php
     for ($i = 0; $i < rand(1, $jumlah); $i++) {
       $beli = rand(1, 10);
       $id_barang = rand(0, $jumlah);
       $harga = $harga_barang[$i] * $beli;
+      $total = $harga_barang[$i] * $beli;
       $grandtotal += $total;
+
+      echo "<tr>";
+        echo "<td>" . $kode_barang[$id_barang] . "</td>";
+        echo "<td>" . $nama_barang[$id_barang] . "</td>";
+        echo "<td style='text-align:right;'>" . number_format($harga_barang[$id_barang], 0, ',', '.') . "</td>";
+        echo "<td style='text-align:center;'>" . $beli . "</td>";
+        echo "<td style='text-align:right;'>" . number_format($total, 0, ',', '.') . "</td>";
+        echo "</tr>";
     }
+    
     ?>
+    <tr>
+        <td colspan="4" style="text-align:right; padding-right:20px"><strong>Total Belanja</strong></td>
+        <td style="text-align:right;"><strong><?php echo number_format($grandtotal, 0, ',', '.'); ?></strong></td>
+      </tr>
+    </table>
+
   </main>
     <script>
         function logout() {

@@ -1,3 +1,25 @@
+<?php
+session_start();
+$error = "";
+
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Data login statis
+    $user_valid = "admin";
+    $pass_valid = "1234";
+
+    if ($username == $user_valid && $password == $pass_valid) {
+        $_SESSION['username'] = $username;
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        $error = "Username atau password salah!";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -70,6 +92,15 @@
     .btn-cancel:hover {
         background-color: #e0e0e0;
     }
+    .error {
+        background-color: #ffe2e2;
+        color: #c00;
+        padding: 8px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 14px;
+    }
     .footer {
         margin-top: 20px;
         text-align: center;
@@ -83,14 +114,18 @@
 <div class="login-container">
     <h2>POLGAN MART</h2>
 
-    <form>
+    <?php if($error): ?>
+        <div class="error"><?= $error; ?></div>
+    <?php endif; ?>
+
+    <form method="POST">
         <label for="username">Username</label>
         <input type="text" name="username" id="username" required>
 
         <label for="password">Password</label>
         <input type="password" name="password" id="password" required>
 
-        <button type="submit" class="btn-login">Login</button>
+        <button type="submit" class="btn-login" name= "login">Login</button>
         <button type="reset" class="btn-cancel">Batal</button>
     </form>
 

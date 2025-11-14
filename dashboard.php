@@ -8,23 +8,15 @@ if (!isset($_SESSION['username'])) {
 }
 
 
-    $kode_barang = [
-        'K001', 'K002', 'K003', 'K004', 'K005'
+    $barang = [
+        ["K001", "Teh Pucuk", "3000"],
+        ["K002", "Sukro", "2500"],
+        ["K001", "Sprite", "5000"],
+        ["K001", "Coca Cola", "6000"],
+        ["K001", "Chitose", "4000"],
     ];
-
-     $nama_barang = [
-        'Teh Pucuk',
-        'Sukro',
-        'Sprite',
-        'Coca Cola',
-        'Chitose'
-    ];
-
-    $harga_barang = [
-        3000, 2500, 5000, 6000, 4000
-    ];
-    
-    $jumlah = count($nama_barang) - 1;
+ 
+    $jumlah = count($barang) - 1;
     $beli = 0;
     $total = 0;
     $grandtotal = 0;
@@ -205,12 +197,16 @@ if (!isset($_SESSION['username'])) {
 
     <?php
     for ($i = 0; $i < rand(1, $jumlah); $i++) {
-      $beli = rand(1, 10);
       $id_barang = rand(0, $jumlah);
-      $harga = $harga_barang[$i] * $beli;
-      $total = $harga_barang[$i] * $beli;
+      $kode_barang = $barang[$id_barang][0];
+      $nama_barang = $barang[$id_barang][1];
+      $harga_barang = $barang[$id_barang][2];
+
+      $beli = rand(1, 10);
+      $total = $harga_barang * $beli;
       $grandtotal += $total;
 
+      
       echo "<tr>";
         echo "<td>" . $kode_barang[$id_barang] . "</td>";
         echo "<td>" . $nama_barang[$id_barang] . "</td>";

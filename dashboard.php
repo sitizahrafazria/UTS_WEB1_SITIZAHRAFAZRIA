@@ -7,27 +7,41 @@ if (!isset($_SESSION['username'])) {
   exit;
 }
 
+// cek apakah ada pengiriman data
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $barang = [
-        ["K001", "Teh Pucuk", "3000"],
-        ["K002", "Sukro", "2500"],
-        ["K001", "Sprite", "5000"],
-        ["K001", "Coca Cola", "6000"],
-        ["K001", "Chitose", "4000"],
+    $kode_barang  = $_POST['kode_barang']   ?? '';
+    $nama_barang  = $_POST['nama_barang']   ?? '';
+    $harga_barang  = (int)($_POST['harga_barang']   ?? 0);
+    $jumlah  = (int)($_POST['jumlah']   ?? 0);
+
+    $_SESSION['barang'][] = [
+      'kode_barang' => $kode_barang,
+      'nama_barang' => $nama_barang,
+      'harga_barang' => $harga_barang,
+      'jumlah' => $jumlah
     ];
- 
-    $jumlah = count($barang) - 1;
-    $beli = 0;
-    $total = 0;
-    $grandtotal = 0;
-?>
+  }
+
+  $barang = $_SESSION['barang'] ?? null;
+  // untuk reset keranjang jika request GET
+  if (isset($_GET["reset"])) {
+    unset($_SESSION['barang']);
+    $barang = null;
+    header('location: dashboard.php');
+    exit;
+  }
+
+  $grandtotal = 0;
+
+  ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halaman Admin - POLGAN MART</title>
+    <title>Halaman Admin</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,7 +49,6 @@ if (!isset($_SESSION['username'])) {
             margin: 0;
             padding: 0;
         }
-
         /* ===== Header ===== */
         header {
             background-color: #ffffff;
@@ -121,22 +134,7 @@ if (!isset($_SESSION['username'])) {
             color: #555;
             font-size: 14px;
         }
-
-        button {
-            margin-top: 10px;
-            background-color: #ffffff;
-            color: #333;
-            border: 1px solid #ccc;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #f0f0f0;
-        }
-
+         
         main {
       background-color: white;
       padding: 20px;
@@ -145,6 +143,44 @@ if (!isset($_SESSION['username'])) {
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
+
+    form {
+      width: 90%;
+      margin-bottom: 30px;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .container {
+      display: flex;
+      margin-top: -3px;
+    }
+
+    input[type="submit"],
+    input[type="reset"] {
+      width: 20%;
+      padding: 10px;
+      margin: 10px 1%;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    input[type="reset"] {
+      background-color: white;
+      color: #333;
+      border: 1px solid #ccc;
     }
 
     table {
@@ -166,7 +202,6 @@ if (!isset($_SESSION['username'])) {
     </style>
 </head>
 <body>
-
     <!-- HEADER -->
     <header>
         <div class="header-left">
@@ -184,6 +219,22 @@ if (!isset($_SESSION['username'])) {
     </header>
 
     <main>
+        <form action="dashboard.php" method="POST">
+            <label for="kode_barang">Kode Barang</label>
+            <input type="text" name="kode_barang" id="kode_barang" placeholder="Masukan Kode Barang" required>
+            <label for="nama_barang">Nama Barang</label>
+            <input type="text" name="nama_barang" id="nama_barang" placeholder="Masukan Nama Barang" required>
+            <label for="harga_barang">Harga</label>
+            <input type="number" name="harga_barang" id="harga_barang" placeholder="Masukan Harga" required>
+            <label for="jumlah">Jumlah</label>
+            <input type="number" name="jumlah" id="jumlah" placeholder="Masukan jumlah" required>
+            <div class="container">
+                <input type="submit" value="Tambahkan">
+                <input type="reset" value="Batal">
+            </div>
+            </form>
+                
+    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
     <h2>Daftar Pembelian</h2>
     <p>Daftar pembelian dibuat secara acak tiap kali halaman dimuat</p>
     <table border="1" cellpadding="10" cellspacing="0">
@@ -194,36 +245,69 @@ if (!isset($_SESSION['username'])) {
         <th>Jumlah</th>
         <th>Total (Rp)</th>
       </tr>
-
     <?php
-    for ($i = 0; $i < rand(1, $jumlah); $i++) {
-      $id_barang = rand(0, $jumlah);
-      $kode_barang = $barang[$id_barang][0];
-      $nama_barang = $barang[$id_barang][1];
-      $harga_barang = $barang[$id_barang][2];
+    foreach ($barang as $item) {
 
-      $beli = rand(1, 10);
-      $total = $harga_barang * $beli;
-      $grandtotal += $total;
+    $kode_barang  = $item['kode_barang'];
+    $nama_barang  = $item['nama_barang'];
+    $harga_barang = $item['harga_barang'];
+    $jumlah       = $item['jumlah'];
 
-      
-      echo "<tr>";
-        echo "<td>" . $kode_barang[$id_barang] . "</td>";
-        echo "<td>" . $nama_barang[$id_barang] . "</td>";
-        echo "<td style='text-align:right;'>" . number_format($harga_barang[$id_barang], 0, ',', '.') . "</td>";
-        echo "<td style='text-align:center;'>" . $beli . "</td>";
-        echo "<td style='text-align:right;'>" . number_format($total, 0, ',', '.') . "</td>";
-        echo "</tr>";
+    // hitung total
+    $grandtotal  = $harga_barang * $jumlah;
+
+    //hitung diskon
+    if ($grandtotal  == 0 ) {
+        $d = "0%";
+        $diskon = 0;
+    } elseif ($grandtotal < 50000) {
+        $d = "5%";
+        $diskon = 0.05 * $grandtotal;
+    } elseif ($grandtotal < 100000) {
+        $d = "10%";
+        $diskon = 0.10 * $grandtotal;
+    } else {
+        $d = "15%";
+        $diskon = 0.15 * $grandtotal;
     }
-    
+
+    $totalbayar = $grandtotal -$diskon;
+
+
+      echo "<tr>";
+        echo "<td>" . $kode_barang . "</td>";
+        echo "<td>" . $nama_barang . "</td>";
+        echo "<td style='text-align:right;'>" . number_format($harga_barang, 0, ',', '.') . "</td>";
+        echo "<td style='text-align:center;'>" . $jumlah . "</td>";
+        echo "<td style='text-align:right;'>" . number_format($grandtotal, 0, ',', '.') . "</td>";
+        echo "</tr>";
+  }
     ?>
+
+    <!-- Total belanja, diskon, total bayar -->
     <tr>
         <td colspan="4" style="text-align:right; padding-right:20px"><strong>Total Belanja</strong></td>
         <td style="text-align:right;"><strong><?php echo number_format($grandtotal, 0, ',', '.'); ?></strong></td>
       </tr>
+      <tr>
+        <td colspan="4" style="text-align:right; padding-right:20px"><strong><?php echo "Diskon" . $d; ?></strong></td>
+        <td style="text-align:right;"><strong><?php echo number_format($diskon, 0, ',', '.'); ?></strong></td>
+      </tr>
+      <tr>
+        <td colspan="4" style="text-align:right; padding-right:20px"><strong>Total Bayar</strong></td>
+        <td style="text-align:right;"><strong><?php echo number_format($totalbayar , 0, ',', '.'); ?></strong></td>
+      </tr>
     </table>
 
+    <!-- Reset Keranjang -->
+     <form action="dashboard.php" method="get" style="margin-top:20px;">
+
+                    <input type="submit" value="Reset Keranjang" name="reset">
+
+                </form>
+                <?php endif; ?>
   </main>
+
     <script>
         function logout() {
             alert("Anda telah logout!");

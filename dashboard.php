@@ -199,6 +199,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       background-color: #f2f2f2;
     }
 
+    #kode_barang {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
     </style>
 </head>
 <body>
@@ -221,7 +228,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main>
         <form action="dashboard.php" method="POST">
             <label for="kode_barang">Kode Barang</label>
-            <input type="text" name="kode_barang" id="kode_barang" placeholder="Masukan Kode Barang" required>
+            <select name="kode_barang" id="kode_barang" required onchange="isiDataBarang()">
+        <option value="">Pilih Kode Barang</option>
+        <option value="BRG001">BRG001 - Sabun Mandi</option>
+        <option value="BRG002">BRG002 - Sikat Gigi</option>
+        <option value="BRG003">BRG003 - Pasta Gigi</option>
+        <option value="BRG004">BRG004 - Shampoo</option>
+        <option value="BRG005">BRG005 - Handuk</option>
+      </select>
             <label for="nama_barang">Nama Barang</label>
             <input type="text" name="nama_barang" id="nama_barang" placeholder="Masukan Nama Barang" required>
             <label for="harga_barang">Harga</label>
@@ -314,6 +328,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // contoh redirect ke halaman login
             window.location.href = "index.php";
         }
+
+        //munculkan nama baranng, harga barang
+    function isiDataBarang() {
+      const kode = document.getElementById("kode_barang").value;
+
+      const dataBarang = {
+        "BRG001": {
+          nama: "Sabun Mandi",
+          harga: 15000
+        },
+        "BRG002": {
+          nama: "Sikat Gigi",
+          harga: 8000
+        },
+        "BRG003": {
+          nama: "Pasta Gigi",
+          harga: 12000
+        },
+        "BRG004": {
+          nama: "Shampoo",
+          harga: 20000
+        },
+        "BRG005": {
+          nama: "Handuk",
+          harga: 30000
+        }
+      };
+
+      if (dataBarang[kode]) {
+        document.getElementById("nama_barang").value = dataBarang[kode].nama;
+        document.getElementById("harga_barang").value = dataBarang[kode].harga;
+      } else {
+        document.getElementById("nama_barang").value = "";
+        document.getElementById("harga_barang").value = "";
+      }
+    }
     </script>
+
 </body>
 </html>

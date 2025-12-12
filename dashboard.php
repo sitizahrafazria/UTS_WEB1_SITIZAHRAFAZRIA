@@ -23,6 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
   }
 
+  if (isset($_POST['hapus'])) {
+    $kode_hapus = $_POST['hapus'];
+    // Cari dan hapus item dari keranjang berdasarkan kode_barang
+    foreach ($_SESSION['barang'] as $index => $item) {
+      if ($item['kode_barang'] === $kode_hapus) {
+        unset($_SESSION['barang'][$index]);
+        // Reindex array setelah penghapusan
+        $_SESSION['barang'] = array_values($_SESSION['barang']);
+        break;
+      }
+    }
+  }
+
   $barang = $_SESSION['barang'] ?? null;
   // untuk reset keranjang jika request GET
   if (isset($_GET["reset"])) {
@@ -134,6 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #555;
             font-size: 14px;
         }
+        button[name="hsapus"] {
+          background-color: #3578e5
+          color: white;
+          border: 1px solid #ccc;
+        }
          
         main {
       background-color: white;
@@ -243,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="jumlah">Jumlah</label>
             <input type="number" name="jumlah" id="jumlah" placeholder="Masukan jumlah" required>
             <div class="container">
-                <input type="submit" value="Tambahkan">
+                <input type="submit" value="Tambahkan" name= "tambah_barang">
                 <input type="reset" value="Batal">
             </div>
             </form>
@@ -258,6 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <th>Harga Barang (Rp)</th>
         <th>Jumlah</th>
         <th>Total (Rp)</th>
+        <th>Aksi</th>
       </tr>
     <?php
     foreach ($barang as $item) {
@@ -294,6 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<td style='text-align:right;'>" . number_format($harga_barang, 0, ',', '.') . "</td>";
         echo "<td style='text-align:center;'>" . $jumlah . "</td>";
         echo "<td style='text-align:right;'>" . number_format($grandtotal, 0, ',', '.') . "</td>";
+        echo "<td style='text-align:right;'> <form method= 'post'><button type='submit' name='hapus' value=$kode_barang>Hapus</button></form></td>";
         echo "</tr>";
   }
     ?>
